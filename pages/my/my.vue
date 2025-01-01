@@ -5,7 +5,7 @@
 		<uni-icons fontFamily="CustomFont" :size="20" color="#FF0000">{{'&#xe657'}}</uni-icons>
 	</view>
 	<view class="actions-container">
-		<view class="action-card">
+		<view class="action-card" @click="handleToOrder">
 			<uni-icons fontFamily="CustomFont" :size="20" color="#eea427">{{'&#xe685'}}</uni-icons>
 			<text>订单</text>
 		</view>
@@ -21,7 +21,11 @@
 			}
 		},
 		methods: {
-			cover: 'https://qiniu-web-assets.dcloud.net.cn/unidoc/zh/shuijiao.jpg',
+			handleToOrder(){
+				uni.navigateTo({
+					url:'/pages/order/order'
+				})
+			}
 			
 		}
 	}

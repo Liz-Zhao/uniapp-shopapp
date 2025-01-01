@@ -10,15 +10,16 @@
 	</view>
 	<view style="display: flex; justify-content: space-between; margin: 0 20px;">
 		<text>数量</text>
-		<view class="calculator">
-			<view class="action-btn">
+		<view class="calculator" v-if="getCounts">
+			<view class="action-btn" @click="handleAddShop">
 				<uni-icons type="plusempty" size="18" color="#ffffff"></uni-icons>
 			</view>
-			<text style="min-width: 50rpx;text-align: center;">12</text>
-			<view class="action-btn">
+			<text style="min-width: 50rpx;text-align: center;">{{getCounts}}</text>
+			<view class="action-btn" @click="handleSubShop">
 				<uni-icons fontFamily="CustomFont" :size="18" color="#ffffff">{{'&#xe697'}}</uni-icons>
 			</view>
 		</view>
+		<text v-else>0</text>
 	</view>
 	<view class="specs-box" v-for="(item,index) in specs" :key="index">
 		<text>{{item.title}}</text>
@@ -30,9 +31,9 @@
 	</view>
 	<view style="height: 150px;text-align: center; color: #A6A6A6;">再也没有了~</view>
 	<view class="action-container">
-		<text>总计：<text style="color:#FF0000">￥402.00</text> </text>
+		<text>总计：<text style="color:#FF0000">￥{{totalPrice}}</text> </text>
 		<view class="action-box">
-			<view class="submit-btn">加入购物车</view>
+			<view class="submit-btn" @click="handleAddCart">加入购物车</view>
 			<view class="submit-btn">结算</view>
 		</view>
 		
@@ -40,18 +41,53 @@
 </template>
 
 <script>
+	import {mapState,mapMutations,mapGetters } from 'vuex';
+	
 	export default {
+		onLoad:function(option){
+			console.log(option.id)
+			this.id = option.id
+		},
 		data() {
 			return {
 				cover: 'https://qiniu-web-assets.dcloud.net.cn/unidoc/zh/shuijiao.jpg',
 				specs:[{title:"颜色", options:[{title:"白色"},{title:"银色"},{title:"灰色"},{title:"黑色"},{title:"灰色"}]},
 				{title:"型号", options:[{title:"白色"},{title:"银色"},{title:"灰色"},{title:"黑色"},{title:"灰色"}]},
 				{title:"型号", options:[{title:"白色"},{title:"银色"},{title:"灰色"},{title:"黑色"},{title:"灰色"}]}
-					]
+					],
+				id: '',
+				shop:{price:9.9,id:'1'}
 			}
 		},
 		methods: {
-
+			...mapMutations({
+				addShop: 'cart/addShop',
+				updateShop:'cart/updateShop',
+				removeShop:'cart/removeShop'
+			}),
+			handleAddCart(){
+				this.addShop(this.shop)
+			},
+			handleAddShop(){
+				this.updateShop({...this.shop, count:1})
+			},
+			handleSubShop(){
+				if(this.getCounts && this.getCounts ==1){
+					this.removeShop({...this.shop})
+				}else{
+					this.updateShop({...this.shop, count:-1})
+				}
+			}
+		},
+		computed:{
+			...mapState({
+				carts: state=>state.cart.carts,
+				totalPrice: state =>state.cart.totalPrice
+			}),
+			getCounts(){
+				let item= this.carts.find(item=> item.id === this.id)
+				return item ? item.counts : null;
+			}
 		}
 	}
 </script>

@@ -7,6 +7,7 @@
 		<view class="content">
 			<view v-if="current === 0" class="content-box">
 				<orderCard v-for="(item,index) in orders" :key="index" />
+				<view style="height: 50px;text-align: center;padding-top: 20px; color: #A6A6A6;background-color: #f8f8f8;">再也没有了~</view>
 			</view>
 			<view v-if="current === 1"><text class="content-text">选项卡2的内容</text></view>
 			<view v-if="current === 2"><text class="content-text">选项卡3的内容</text></view>

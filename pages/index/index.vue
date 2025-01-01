@@ -14,7 +14,7 @@
 		</view>
 		<view class="content">
 			<view v-if="current === 0" class="content-box">
-				<shopCard v-for="(item,index) in shops" :key="index"/>
+				<shopCard v-for="(item,index) in shops" :key="index" :shop="item"/>
 			</view>
 			<view v-if="current === 1"><text class="content-text">选项卡2的内容</text></view>
 			<view v-if="current === 2"><text class="content-text">选项卡3的内容</text></view>
@@ -29,8 +29,9 @@
 			return {
 				searchValue: '',
 				current: 0,
-				items: ['全部', '经典', '装饰画', ],
-				shops:['1','2','3','4','5']
+				items: ['全部', '经典', '装饰画' ],
+				shops:[{id: '1', title:"笔",subtitle:"简约大气",coverImage:"pen.jpg",price:9.9},
+				{id: '2', title:"钱包",subtitle:"2025年新款",coverImage:"moneybag.jpg",price:19.9}]
 			}
 		},
 		onLoad() {

@@ -1,0 +1,14 @@
+{
+  "name": "uniapp-shopapp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "dev:h5": "vue-cli-service serve",
+    "dev:mp-weixin": "uni-app dev:mp-weixin",
+    "build:h5": "vue-cli-service build",
+    "build:mp-weixin": "uni-app build:mp-weixin"
+  },
+  "author": "",
+  "license": "ISC"
+}

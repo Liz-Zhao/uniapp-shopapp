@@ -1,28 +1,28 @@
 <template>
-	<view v-for="(item,index) in shops" :key="index" class="cart-card">
-		<image :src="cover" mode="aspectFill" class="cart-image"></image>
+	<view v-for="(item,index) in carts" :key="index" class="cart-card">
+		<image :src="url+item?.coverImage" mode="aspectFill" class="cart-image"></image>
 		<view class="shop-info">
-			<text>iPad mimi 2024</text>
-			<text class="shop-subtitle">银色+256</text>
-			<text>￥130.00</text>
+			<text>{{item.title}}</text>
+			<text class="shop-subtitle">{{item.subtitle}}</text>
+			<text>￥{{item.price}}</text>
 		</view>
-		<uni-icons fontFamily="CustomFont" :size="20" color="#FF0000">{{'&#xe674'}}</uni-icons>
+		<uni-icons fontFamily="CustomFont" :size="20" color="#FF0000" @click="handleRemoveShop(item)">{{'&#xe674'}}</uni-icons>
 		<!-- calculator -->
 		<view class="calculator">
-			<view class="action-btn">
-				<uni-icons type="plusempty" size="18" color="#ffffff"></uni-icons>
+			<view class="action-btn" @click="handleAddShop(item)">
+				<uni-icons type="plusempty" size="18" color="#ffffff" ></uni-icons>
 			</view>
-			<text style="min-width: 50rpx;text-align: center;">12</text>
-			<view class="action-btn" >
+			<text style="min-width: 50rpx;text-align: center;">{{item.counts}}</text>
+			<view class="action-btn" @click="handleSubShop(item)">
 				<uni-icons fontFamily="CustomFont" :size="18" color="#ffffff">{{'&#xe697'}}</uni-icons>
 			</view>
 		</view>
 	</view>
-	<view style="height: 150px;text-align: center; color: #A6A6A6;">再也没有了~</view>
+	<view style="height: 150px;text-align: center; color: #A6A6A6; margin-top: 20px;">再也没有了~</view>
 	<view class="action-container">
 		<view class="action-box">
 			<view class="">
-				<text>总计：<text style="color:#FF0000">￥402.00</text> </text>
+				<text>总计：<text style="color:#FF0000">￥{{totalPrice}}</text> </text>
 			</view>
 			<view class="submit-btn">确定提交</view>
 		</view>
@@ -31,14 +31,40 @@
 </template>
 
 <script>
+	import {mapState,mapMutations } from 'vuex';
+	
 	export default {
 		data() {
 			return {
 				shops:['1','2','3'],
-				cover: 'https://qiniu-web-assets.dcloud.net.cn/unidoc/zh/shuijiao.jpg',
+				// cover: 'https://qiniu-web-assets.dcloud.net.cn/unidoc/zh/shuijiao.jpg',
+				url:"http://127.0.0.1:3000/",
 			}
 		},
 		methods: {
+			...mapMutations({
+				removeShop: 'cart/removeShop',
+				updateShop:'cart/updateShop'
+			}),
+			handleRemoveShop(shop){
+				this.removeShop(shop)
+			},
+			handleAddShop(shop){
+				this.updateShop({...shop, count:1})
+			},
+			handleSubShop(shop){
+				if(shop.counts == 1){
+					this.removeShop(shop)
+				}else{
+					this.updateShop({...shop, count:-1})
+				}
+			}
+		},
+		computed:{
+			...mapState({
+				carts: state=>state.cart.carts,
+				totalPrice: state => state.cart.totalPrice
+			})
 			
 		}
 	}
