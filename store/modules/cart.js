@@ -21,7 +21,12 @@ export default{
 		},
 		removeShop(state, payload){
 			state.carts = state.carts.filter((item)=> item.id !== payload.id)
-			state.totalPrice += payload.counts * payload.price * -1;
+			 const lens = state.carts.length; // 计算 carts 的长度
+			if(lens == 0){
+				state.totalPrice = 0.00
+			}else{
+				state.totalPrice += payload.counts * payload.price * -1;
+			}
 		}
 	},
 	actions:{

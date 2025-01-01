@@ -67,8 +67,8 @@
 				this.updateShop({...this.shop, count:1})
 			},
 			subShopCount(){				
-				if(this.counts == 1){
-					this.removeShop(this.shop.id)
+				if(this.shopCounts == 1){
+					this.removeShop({...this.shop})
 					this.IsAddCart = false
 				}else{
 					this.updateShop({...this.shop, count:-1})
