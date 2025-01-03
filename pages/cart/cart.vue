@@ -3,8 +3,8 @@
 		<image :src="url+item?.coverImage" mode="aspectFill" class="cart-image"></image>
 		<view class="shop-info">
 			<text>{{item.title}}</text>
-			<text class="shop-subtitle">{{item.subtitle}}</text>
-			<text>￥{{item.price}}</text>
+			<text class="shop-subtitle">{{item.details}}</text>
+			<text>￥{{item.actualPrice}}</text>
 		</view>
 		<uni-icons fontFamily="CustomFont" :size="20" color="#FF0000" @click="handleRemoveShop(item)">{{'&#xe674'}}</uni-icons>
 		<!-- calculator -->
@@ -12,7 +12,7 @@
 			<view class="action-btn" @click="handleAddShop(item)">
 				<uni-icons type="plusempty" size="18" color="#ffffff" ></uni-icons>
 			</view>
-			<text style="min-width: 50rpx;text-align: center;">{{item.counts}}</text>
+			<text style="min-width: 50rpx;text-align: center;">{{item.solidNums}}</text>
 			<view class="action-btn" @click="handleSubShop(item)">
 				<uni-icons fontFamily="CustomFont" :size="18" color="#ffffff">{{'&#xe697'}}</uni-icons>
 			</view>
@@ -22,21 +22,21 @@
 	<view class="action-container">
 		<view class="action-box">
 			<view class="">
-				<text>总计：<text style="color:#FF0000">￥{{totalPrice}}</text> </text>
+				<text>总计：<text style="color:#FF0000">￥{{totalPrice()}}</text> </text>
 			</view>
-			<view class="submit-btn">确定提交</view>
+			<view class="submit-btn" @click="handleToSubmitOrder">确定提交</view>
 		</view>
 		
 	</view>
 </template>
 
 <script>
-	import {mapState,mapMutations } from 'vuex';
+	import {mapState,mapMutations,mapGetters } from 'vuex';
+	import {http} from '../../apis/requestAPI.js'
 	
 	export default {
 		data() {
 			return {
-				shops:['1','2','3'],
 				// cover: 'https://qiniu-web-assets.dcloud.net.cn/unidoc/zh/shuijiao.jpg',
 				url:"http://127.0.0.1:3000/",
 			}
@@ -46,6 +46,11 @@
 				removeShop: 'cart/removeShop',
 				updateShop:'cart/updateShop'
 			}),
+			...mapGetters({
+				totalPrice:'cart/totalPrice',
+				totalShopNums:"cart/totalShopNums",
+				lens:'cart/lens'
+			}),
 			handleRemoveShop(shop){
 				this.removeShop(shop)
 			},
@@ -53,19 +58,28 @@
 				this.updateShop({...shop, count:1})
 			},
 			handleSubShop(shop){
-				if(shop.counts == 1){
+				if(shop.solidNums == 1){
 					this.removeShop(shop)
 				}else{
 					this.updateShop({...shop, count:-1})
+				}
+			},
+			handleToSubmitOrder(){
+				if(this.lens() === 0){
+					uni.showToast({
+						title:'请先下单商品！'
+					})
+				}else{
+				uni.navigateTo({
+					url:'/pages/addOrder/addOrder'
+				})
 				}
 			}
 		},
 		computed:{
 			...mapState({
 				carts: state=>state.cart.carts,
-				totalPrice: state => state.cart.totalPrice
 			})
-			
 		}
 	}
 </script>

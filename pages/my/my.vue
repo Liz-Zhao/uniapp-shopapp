@@ -1,7 +1,7 @@
 <template>
-	<view class="user-box">
-		<image :src="cover" mode="aspectFill" class="user-image"></image>
-		<text>MeiLi</text>
+	<view class="user-box" @click="handleToLogin">
+		<image :src="userInfo?.avatarUrl || cover" mode="aspectFill" class="user-image"></image>
+		<text> {{userInfo?.nickName || '登录/注册'  }} </text>
 		<uni-icons fontFamily="CustomFont" :size="20" color="#FF0000">{{'&#xe657'}}</uni-icons>
 	</view>
 	<view class="actions-container">
@@ -13,11 +13,12 @@
 </template>
 
 <script>
+	import {mapState} from 'vuex'
 	export default {
 		data() {
 			return {
 				cover: 'https://qiniu-web-assets.dcloud.net.cn/unidoc/zh/shuijiao.jpg',
-				
+				token: uni.getStorageSync('token')
 			}
 		},
 		methods: {
@@ -25,7 +26,20 @@
 				uni.navigateTo({
 					url:'/pages/order/order'
 				})
+			},
+			handleToLogin(){
+				if(!this.token){
+					uni.navigateTo({
+						url:'/pages/login/login'
+					})
+				}
 			}
+			
+		},
+		computed:{
+			...mapState({
+				userInfo: state => state.app.userInfo,
+			}),
 			
 		}
 	}

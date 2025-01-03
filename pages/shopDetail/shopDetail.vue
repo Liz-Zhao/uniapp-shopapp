@@ -1,37 +1,38 @@
 <template>
 	<view class="detail-top-container">
-		<image :src="cover" mode="aspectFill" class="detail-img"></image>
+		<image :src="shop?.shopImages" mode="aspectFill" class="detail-img"></image>
 		<view style="display: flex; justify-content: space-between;">
-			<text>iPad mini</text>
-			<text>￥34.75</text>
+			<text>{{shop?.title}}</text>
+			<text>￥{{shop?.price}}</text>
 		</view>
-		<text style="color: #A6A6A6; font-size: 12px;">2024新款</text>
+		<text style="color: #A6A6A6; font-size: 12px;">{{shop?.subtitle}}</text>
 		<view class="divider"></view>
 	</view>
 	<view style="display: flex; justify-content: space-between; margin: 0 20px;">
 		<text>数量</text>
-		<view class="calculator" v-if="getCounts">
+		<view class="calculator">
 			<view class="action-btn" @click="handleAddShop">
 				<uni-icons type="plusempty" size="18" color="#ffffff"></uni-icons>
 			</view>
-			<text style="min-width: 50rpx;text-align: center;">{{getCounts}}</text>
+			<text style="min-width: 50rpx;text-align: center;">{{solidNums}}</text>
 			<view class="action-btn" @click="handleSubShop">
 				<uni-icons fontFamily="CustomFont" :size="18" color="#ffffff">{{'&#xe697'}}</uni-icons>
 			</view>
 		</view>
-		<text v-else>0</text>
+
 	</view>
-	<view class="specs-box" v-for="(item,index) in specs" :key="index">
+	<view class="specs-box" v-for="(item,index) in shop?.specification" :key="index">
 		<text>{{item.title}}</text>
 		<view class="options-box">
-			<view class="option" v-for="(option,index) in item.options" :key="index">
+			<view class="option" :class="{checked: option.checked}" v-for="(option,pindex) in item.options" :key="pindex" @click="handleSelectOption(index,pindex)">
 				{{option.title}}
 			</view>
 		</view>
 	</view>
 	<view style="height: 150px;text-align: center; color: #A6A6A6;">再也没有了~</view>
 	<view class="action-container">
-		<text>总计：<text style="color:#FF0000">￥{{totalPrice}}</text> </text>
+		<text style="color:#FF0000">￥{{actualPrice}}</text>
+		<text>{{details}}</text>
 		<view class="action-box">
 			<view class="submit-btn" @click="handleAddCart">加入购物车</view>
 			<view class="submit-btn">结算</view>
@@ -42,51 +43,111 @@
 
 <script>
 	import {mapState,mapMutations,mapGetters } from 'vuex';
+	import {http} from '../../apis/requestAPI.js'
+	import { BASE_URL } from '../../apis/requestAPI.js';
 	
 	export default {
 		onLoad:function(option){
-			console.log(option.id)
-			this.id = option.id
+			this.id = option.id;
+			this.getShopDetail(option.id)
 		},
 		data() {
 			return {
-				cover: 'https://qiniu-web-assets.dcloud.net.cn/unidoc/zh/shuijiao.jpg',
-				specs:[{title:"颜色", options:[{title:"白色"},{title:"银色"},{title:"灰色"},{title:"黑色"},{title:"灰色"}]},
-				{title:"型号", options:[{title:"白色"},{title:"银色"},{title:"灰色"},{title:"黑色"},{title:"灰色"}]},
-				{title:"型号", options:[{title:"白色"},{title:"银色"},{title:"灰色"},{title:"黑色"},{title:"灰色"}]}
-					],
+				BASE_URL,
 				id: '',
-				shop:{price:9.9,id:'1'}
+				shop:{
+					shopImages:[]
+				},
+				solidNums:1,
+				// actualPrice:0
 			}
 		},
 		methods: {
 			...mapMutations({
 				addShop: 'cart/addShop',
-				updateShop:'cart/updateShop',
-				removeShop:'cart/removeShop'
 			}),
 			handleAddCart(){
-				this.addShop(this.shop)
+				const uShop = {...this.shop,
+					shopID: this.shop._id+this.details,
+					solidNums: this.solidNums, 
+					details:this.details, 
+					actualPrice:this.actualPrice,
+					totalPrice:this.totalPrice}
+				this.addShop(uShop)
+				uni.switchTab({
+					url:'/pages/index/index'
+				})
 			},
 			handleAddShop(){
-				this.updateShop({...this.shop, count:1})
+				this.solidNums +=1
 			},
 			handleSubShop(){
-				if(this.getCounts && this.getCounts ==1){
-					this.removeShop({...this.shop})
+				if(this.solidNums ==1){
+					return
 				}else{
-					this.updateShop({...this.shop, count:-1})
+					this.solidNums += -1
 				}
+			},
+			async getShopDetail(id){
+				const res = await http.get('/api/v1/shop/'+id);
+				if(res.success){
+					this.shop = {...res.data, shopImages: this.BASE_URL+'/'+res.data.shopImages[0]};
+				}
+			},
+			handleSelectOption(index,pindex){
+				let specs = this.shop.specification;
+				specs = specs.map((item, i) => {
+				  // 对每个 item 的 options 进行处理
+				  item.options = item.options.map((option, p) => {
+				    // 判断当前 option 是否是需要修改的选项
+				    if (p === pindex && i === index) {
+				      return { ...option, checked: true };  // 修改 checked 为 true
+				    } else {
+				      return { ...option, checked: false };  // 其他的选项设置为 false
+				    }
+				  });
+				  return item;  // 返回修改后的 item
+				});
 			}
 		},
 		computed:{
-			...mapState({
-				carts: state=>state.cart.carts,
-				totalPrice: state =>state.cart.totalPrice
-			}),
-			getCounts(){
-				let item= this.carts.find(item=> item.id === this.id)
-				return item ? item.counts : null;
+			details(){
+				let details = '';
+				// Check if specification is defined and is an array
+				  if (Array.isArray(this.shop.specification)) {
+				    this.shop.specification.forEach((item) => {
+				      details += item.title || ''; // Handle undefined title gracefully
+				      let s = "";
+				      
+				      // Check if options exist and are an array
+				      if (Array.isArray(item.options)) {
+				        item.options.forEach((option) => {
+				          if (option.checked) {
+				            s = option.title || ''; // Handle undefined title gracefully
+				          }
+				        });
+				      }
+				      details += ":" + s + ";";
+				    });
+				  }
+				return details;
+			},
+			actualPrice(){
+				let actualPrice = 0;
+				if (Array.isArray(this.shop.specification)) {
+				this.shop.specification.forEach((item)=>{
+					 if (Array.isArray(item.options)) {
+					item.options.forEach((option) => {
+					  if (option.checked) {
+						actualPrice+= option.price;
+					  }
+					});
+					}
+				})}
+				return Math.round((actualPrice + this.shop.price)*100)/100
+			},
+			totalPrice(){
+				return Math.round((this.actualPrice * this.solidNums) * 100) / 100;;
 			}
 		}
 	}
@@ -143,6 +204,10 @@
 			place-content: center;
 			margin-bottom: 10px;
 		}
+		.option.checked{
+			background-color: #eea427;
+			color: #ffffff;
+		}
 	}
 	.action-container{
 		position: fixed;
@@ -152,6 +217,8 @@
 		background: #ffffff;
 		padding: 15px 5px;
 		box-shadow: 1px 0 4px 0 rgba(0, 0, 0, 0.4);
+		display: flex;
+		flex-direction: column;
 		
 		.action-box{
 			display: flex;
