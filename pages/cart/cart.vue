@@ -66,13 +66,18 @@
 			},
 			handleToSubmitOrder(){
 				if(this.lens() === 0){
-					uni.showToast({
+					return uni.showToast({
 						title:'请先下单商品！'
 					})
+				}
+				if(!uni.getStorageSync('token')){
+					uni.navigateTo({
+						url:'/pages/login/login'
+					})
 				}else{
-				uni.navigateTo({
-					url:'/pages/addOrder/addOrder'
-				})
+					uni.navigateTo({
+						url:'/pages/addOrder/addOrder'
+					})
 				}
 			}
 		},

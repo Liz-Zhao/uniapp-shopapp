@@ -1,8 +1,9 @@
 <template>
-	<view class="user-box" @click="handleToLogin">
-		<image :src="userInfo?.avatarUrl || cover" mode="aspectFill" class="user-image"></image>
+	<view class="user-box">
+		<image :src="userInfo?.avatarUrl || cover" mode="aspectFill" class="user-image" @click="handleToLogin"></image>
 		<text> {{userInfo?.nickName || '登录/注册'  }} </text>
 		<uni-icons type="right" :size="20" color="#267be0"></uni-icons>
+		<uni-icons type="upload" :size="22" color="#267be0" style="rotate: 90deg;" @click="handleLogout" v-show="userInfo"></uni-icons>
 	</view>
 	<view class="actions-container">
 		<view class="action-card" @click="handleToOrder">
@@ -13,33 +14,38 @@
 </template>
 
 <script>
-	import {mapState} from 'vuex'
+	import {mapState,mapMutations} from 'vuex'
 	export default {
 		data() {
 			return {
 				cover: 'https://qiniu-web-assets.dcloud.net.cn/unidoc/zh/shuijiao.jpg',
-				token: uni.getStorageSync('token')
 			}
 		},
 		methods: {
+			...mapMutations({
+				clearAll:'app/clearAll'
+			}),
 			handleToOrder(){
 				uni.navigateTo({
 					url:'/pages/order/order'
 				})
 			},
 			handleToLogin(){
-				if(!this.token){
+				if(!uni.getStorageSync('token')){
 					uni.navigateTo({
 						url:'/pages/login/login'
 					})
 				}
+			},
+			handleLogout(){
+				uni.clearStorageSync();
+				this.clearAll()
 			}
-			
 		},
 		computed:{
 			...mapState({
-				userInfo: state => state.app.userInfo,
-			}),
+			      userInfo: (state) => state.app.userInfo,
+			    }),
 			
 		}
 	}

@@ -34,6 +34,7 @@
 						// 获取用户信息
 						const infoRes = await uni.getUserInfo({ provider: 'weixin' });
 						this.updateUserInfo(infoRes.userInfo);
+						uni.setStorageSync('userInfo', infoRes.userInfo)
 						
 						// 获取token
 						const res = await http.post('/api/v1/signin', { code: loginRes.code,username:infoRes.userInfo?.nickName });
@@ -45,13 +46,12 @@
 								title: '授权成功',
 								icon: 'success'
 							});
-							uni.switchTab({
+							uni.reLaunch({
 								url: '/pages/my/my'
 							});
 						}
 					}
 				} catch (e) {
-					 console.error('登录失败:', e);
 					uni.showToast({
 						title: '授权失败',
 						icon: 'none'

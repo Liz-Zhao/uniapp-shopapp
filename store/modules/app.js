@@ -3,7 +3,7 @@ export default{
 	state:{
 		token: uni.getStorageSync('token') || null,
 		// nickName ,avatarUrl
-		userInfo: {}
+		userInfo: uni.getAccountInfoSync('userInfo') || null
 	},
 	getters:{
 		
@@ -14,6 +14,10 @@ export default{
 		},
 		updateToken(state,token){
 			state.token = token;
+		},
+		clearAll(state){
+			state.token = null;
+			state.userInfo = null
 		}
 	},
 	actions:{

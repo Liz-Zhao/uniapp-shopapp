@@ -35,7 +35,7 @@
 		<text style="color:#8f8f8f;">{{details}}</text>
 		<view class="action-box">
 			<view class="submit-btn" @click="handleAddCart">加入购物车</view>
-			<view class="submit-btn">结算</view>
+			<view class="submit-btn" @click="handleAddOrder">结算</view>
 		</view>
 		
 	</view>
@@ -59,7 +59,6 @@
 					shopImages:[]
 				},
 				solidNums:1,
-				// actualPrice:0
 			}
 		},
 		methods: {
@@ -108,6 +107,24 @@
 				  });
 				  return item;  // 返回修改后的 item
 				});
+			},
+			handleAddOrder(){
+				if(!uni.getStorageSync('token')){
+					uni.navigateTo({
+						url:'/pages/login/login'
+					})
+				}else{
+					const uShop = {...this.shop,
+						shopID: this.shop._id+this.details,
+						solidNums: this.solidNums, 
+						details:this.details, 
+						actualPrice:this.actualPrice,
+						totalPrice:this.totalPrice}
+					this.addShop(uShop)
+					uni.navigateTo({
+						url:'/pages/addOrder/addOrder'
+					})
+				}
 			}
 		},
 		computed:{

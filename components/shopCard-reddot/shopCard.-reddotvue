@@ -29,7 +29,7 @@
 		mapGetters
 	} from 'vuex';
 	export default {
-		name: "shopCard",
+		name: "shopCard-reddot",
 		props: {
 			shop: {
 				type: Object,

@@ -32,14 +32,12 @@ export default{
 			}else{
 				state.carts = [{...shop,id:id}, ...state.carts]
 			}
-			console.log(state.carts)
 		},
 		// count -1 1
 		updateShop(state, payload){
 			state.carts = state.carts.map((item)=> item.shopID== payload.id+payload.details ? {...item, 
 				solidNums: item?.solidNums+payload.count, 
 				totalPrice: item?.totalPrice + payload.actualPrice * payload.count} : item)
-			console.log(state.carts)
 		},
 		removeShop(state, payload){
 			state.carts = state.carts.filter((item)=> item.shopID !== payload.id+payload.details )

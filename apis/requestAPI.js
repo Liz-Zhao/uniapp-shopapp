@@ -30,8 +30,11 @@ const responseInterceptor = (response) => {
 	switch (statusCode) {
 		case 401:
 			// 未授权，跳转登录
-			uni.navigateTo({
-				url: '/pages/login/login'
+			// uni.navigateTo({
+			// 	url: '/pages/login/login'
+			// })
+			uni.showToast({
+				title:'未登录'
 			})
 			break
 		case 404:
