@@ -2,11 +2,11 @@
 	<view class="user-box" @click="handleToLogin">
 		<image :src="userInfo?.avatarUrl || cover" mode="aspectFill" class="user-image"></image>
 		<text> {{userInfo?.nickName || '登录/注册'  }} </text>
-		<uni-icons fontFamily="CustomFont" :size="20" color="#FF0000">{{'&#xe657'}}</uni-icons>
+		<uni-icons type="right" :size="20" color="#267be0"></uni-icons>
 	</view>
 	<view class="actions-container">
 		<view class="action-card" @click="handleToOrder">
-			<uni-icons fontFamily="CustomFont" :size="20" color="#eea427">{{'&#xe685'}}</uni-icons>
+			<uni-icons type="shop" :size="20" color="#267be0"></uni-icons>
 			<text>订单</text>
 		</view>
 	</view>

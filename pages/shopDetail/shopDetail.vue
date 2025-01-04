@@ -32,7 +32,7 @@
 	<view style="height: 150px;text-align: center; color: #A6A6A6;">再也没有了~</view>
 	<view class="action-container">
 		<text style="color:#FF0000">￥{{actualPrice}}</text>
-		<text>{{details}}</text>
+		<text style="color:#8f8f8f;">{{details}}</text>
 		<view class="action-box">
 			<view class="submit-btn" @click="handleAddCart">加入购物车</view>
 			<view class="submit-btn">结算</view>
@@ -178,7 +178,7 @@
 			width: 48rpx;
 			height: 48rpx;
 			border-radius: 50%;
-			background-color: #eea427;
+			background-color: #267be0;
 			display: grid;
 			place-content: center;
 			
@@ -205,7 +205,7 @@
 			margin-bottom: 10px;
 		}
 		.option.checked{
-			background-color: #eea427;
+			background-color: #267be0;
 			color: #ffffff;
 		}
 	}
@@ -228,7 +228,7 @@
 		}
 		.submit-btn{
 			color: #ffffff;
-			background-color: #eea427;
+			background-color: #267be0;
 			padding: 10px 15px;
 			border-radius: 20px;
 		}

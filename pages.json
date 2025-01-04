@@ -3,7 +3,7 @@
 		{
 			"path": "pages/index/index",
 			"style": {
-				"navigationBarTitleText": "uni-app"
+				"navigationBarTitleText": ""
 			}
 		},
 
@@ -46,6 +46,13 @@
 			{
 				"navigationBarTitleText" : ""
 			}
+		},
+		{
+			"path" : "pages/search/search",
+			"style" : 
+			{
+				"navigationBarTitleText" : ""
+			}
 		}
 	],
 	"globalStyle": {
@@ -56,19 +63,25 @@
 	},
 	"uniIdRouter": {},
 	"tabBar": {
-		"selectedColor": "#eea427",
+		"selectedColor": "#267be0",
 		"list": [{
 				"pagePath": "pages/index/index",
-				"text": "菜单"
+				"text": "菜单",
+				"iconPath": "static/goods.png",
+				"selectedIconPath": "static/goods_active.png"
 
 			},
 			{
 				"pagePath": "pages/cart/cart",
-				"text": "购物车"
+				"text": "购物车",
+				"iconPath": "static/shopping_cart.png",
+				"selectedIconPath": "static/shopping_cart_active.png"
 			},
 			{
 				"pagePath": "pages/my/my",
-				"text": "我的"
+				"text": "我的",
+				"iconPath": "static/user.png",
+				"selectedIconPath": "static/user_active.png"
 			}
 		]
 	}

@@ -6,7 +6,7 @@
 			<text class="shop-subtitle">{{item.details}}</text>
 			<text>￥{{item.actualPrice}}</text>
 		</view>
-		<uni-icons fontFamily="CustomFont" :size="20" color="#FF0000" @click="handleRemoveShop(item)">{{'&#xe674'}}</uni-icons>
+		<uni-icons type="trash-filled" :size="22" color="#ff5c5c" @click="handleRemoveShop(item)"></uni-icons>
 		<!-- calculator -->
 		<view class="calculator">
 			<view class="action-btn" @click="handleAddShop(item)">
@@ -22,7 +22,7 @@
 	<view class="action-container">
 		<view class="action-box">
 			<view class="">
-				<text>总计：<text style="color:#FF0000">￥{{totalPrice()}}</text> </text>
+				<text>总计：<text style="color:#ff5c5c">￥{{totalPrice()}}</text> </text>
 			</view>
 			<view class="submit-btn" @click="handleToSubmitOrder">确定提交</view>
 		</view>
@@ -131,7 +131,7 @@
 		}
 		.submit-btn{
 			color: #ffffff;
-			background-color: #eea427;
+			background-color: #267be0;
 			padding: 10px 15px;
 			border-radius: 20px;
 		}
@@ -147,7 +147,7 @@
 			width: 48rpx;
 			height: 48rpx;
 			border-radius: 50%;
-			background-color: #eea427;
+			background-color: #267be0;
 			display: grid;
 			place-content: center;
 			

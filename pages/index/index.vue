@@ -1,74 +1,82 @@
 <template>
-	<!-- search box -->
-	<view>
-		<uni-search-bar @confirm="search" :focus="true" v-model="searchValue" @focus="focus" @clear="clear"
-			cancelButton="none" placeholder="请输入名称">
-		</uni-search-bar>
-	</view>
 
+	<!-- some icons tabs -->
+	<view class="actions-box">
+		<view @click="handleToSearchPage">
+			<uni-icons type="search" size="26" color="#000000"></uni-icons>
+		</view>
+		<view class="cart-btn">
+			<view >
+				<uni-icons type="cart" size="26" color="#000000"></uni-icons>
+			</view>
+			<view class="red-dot" v-if="totalShopNums>0">{{totalShopNums}}</view>
+		</view>
+	</view>
 	<!-- tab box-->
 	<view class="">
 		<view class="tab-container">
-			<uni-segmented-control :current="current" :values="items" style-type="text" active-color="#eea427"
+			<uni-segmented-control :current="current" :values="items" style-type="text" active-color="#267be0"
 				@clickItem="onClickItem" />
 		</view>
 		<view class="content">
-			<view v-if="current === 0" class="content-box">
-				<shopCard v-for="(item,index) in shops" :key="index" :shop="item" class="shop-card" />
+			<view class="content-box"v-for="(item,index) in items" :key="index" v-show="current === index">
+				<shopCard v-for="(item,index) in filterShops" :key="index" :shop="item" />
 			</view>
-			<view v-if="current === 1"><text class="content-text">选项卡2的内容</text></view>
-			<view v-if="current === 2"><text class="content-text">选项卡3的内容</text></view>
+			<!-- <view v-if="current === 1"><text class="content-text">选项卡2的内容</text></view>
+			<view v-if="current === 2"><text class="content-text">选项卡3的内容</text></view> -->
 		</view>
 	</view>
 
 </template>
 
 <script>
-	import {
-		BASE_URL,
-		http
-	} from '@/apis/requestAPI.js'
+	import {BASE_URL,http} from '@/apis/requestAPI.js'
+	import {mapGetters} from 'vuex'
 	export default {
 		data() {
 			return {
 				searchValue: '',
 				current: 0,
+				currentTitle:'',
 				items: [],
-				shops: []
+				shops: [],
+				tabs:[]
 			}
 		},
 		onLoad() {
 			this.getShopcates()
 			this.getShops()
 		},
+		computed:{
+			...mapGetters({
+				totalShopNums:'cart/totalShopNums'
+			}),
+			filterShops(){
+				if(this.current == 0){
+					return this.shops
+				}
+				const filteredShops = this.shops.filter(shop => 
+				  shop.shopcates.some(cate => cate.title === this.currentTitle)
+				);
+				return filteredShops
+			}
+		},
 		methods: {
 			onClickItem(e) {
 				if (this.current !== e.currentIndex) {
 					this.current = e.currentIndex
+					this.currentTitle = this.items[this.current];
 				}
 			},
-			search(res) {
-				uni.showToast({
-					title: '搜索：' + res.value,
-					icon: 'none'
+			handleToSearchPage(){
+				uni.navigateTo({
+					url:'/pages/search/search'
 				})
 			},
-			clear(res) {
-				uni.showToast({
-					title: 'clear事件，清除值为：' + res.value,
-					icon: 'none'
-				})
-			},
-			focus(e) {
-				uni.showToast({
-					title: 'focus事件，输出值为：' + e.value,
-					icon: 'none'
-				})
-			},
-			// get shopcate on
 			getShopcates() {
 				http.get('/api/v1/shopcates').then((res) => {
 					if (res.success) {
+						this.tabs = res.data.data
 						this.items = res.data.data.map((item) => item.title)
 						this.items = ['全部',...this.items]
 					}
@@ -90,7 +98,7 @@
 	}
 </script>
 
-<style>
+<style lang="scss">
 	.content {
 		padding: 25rpx 10rpx 10rpx;
 	}
@@ -101,10 +109,26 @@
 		gap: 18rpx;
 		/* grid-auto-rows: auto; */
 	}
-	.shop-card{
-		background-color: #ffffff;
-		border-radius: 20rpx;
-		box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.3);
-		overflow: hidden;
+	.actions-box{
+		margin: 10px;
+		display: flex;
+		gap: 8px;
+		
+		.cart-btn{
+			position: relative;
+		}
+		.red-dot{
+			position: absolute;
+			top: -10rpx;
+			right: -8rpx;
+			width: 34rpx;
+			height: 34rpx;
+			background-color: #267be0;
+			border-radius: 50%;
+			display: grid;
+			place-content: center;
+			font-size: 12px;
+			color: #ffffff;
+		}
 	}
 </style>
