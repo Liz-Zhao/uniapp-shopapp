@@ -73,9 +73,10 @@
 					actualPrice:this.actualPrice,
 					totalPrice:this.totalPrice}
 				this.addShop(uShop)
-				uni.switchTab({
-					url:'/pages/index/index'
-				})
+				uni.navigateBack()
+				// uni.switchTab({
+				// 	url:'/pages/index/index'
+				// })
 			},
 			handleAddShop(){
 				this.solidNums +=1

@@ -1,12 +1,11 @@
 {
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
-			"path": "pages/index/index",
-			"style": {
-				"navigationBarTitleText": ""
-			}
+			"path" : "pages/menu/menu"
 		},
-
+		{
+			"path": "pages/index/index"
+		},
 		{
 			"path": "pages/cart/cart",
 			"style": {
@@ -14,10 +13,7 @@
 			}
 		},
 		{
-			"path": "pages/my/my",
-			"style": {
-				"navigationBarTitleText": ""
-			}
+			"path": "pages/my/my"
 		},
 		{
 			"path" : "pages/shopDetail/shopDetail",
@@ -34,26 +30,15 @@
 			}
 		},
 		{
-			"path" : "pages/login/login",
-			"style" : 
-			{
-				"navigationBarTitleText" : ""
-			}
+			"path" : "pages/login/login"
 		},
 		{
-			"path" : "pages/addOrder/addOrder",
-			"style" : 
-			{
-				"navigationBarTitleText" : ""
-			}
+			"path" : "pages/addOrder/addOrder"
 		},
 		{
-			"path" : "pages/search/search",
-			"style" : 
-			{
-				"navigationBarTitleText" : ""
-			}
+			"path" : "pages/search/search"
 		}
+		
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
@@ -69,7 +54,10 @@
 				"text": "菜单",
 				"iconPath": "static/goods.png",
 				"selectedIconPath": "static/goods_active.png"
-
+			},
+			{
+				"pagePath": "pages/menu/menu",
+				"text": "下单"
 			},
 			{
 				"pagePath": "pages/cart/cart",
