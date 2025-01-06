@@ -1,5 +1,4 @@
 <template>
-
 	<!-- some icons tabs -->
 	<view class="actions-box">
 		<view @click="handleToSearchPage">
@@ -13,20 +12,18 @@
 		</view>
 	</view>
 	<!-- tab box-->
-	<view class="">
+	<scroll-view scroll-y="true" class="scroll-Y" @scrolltolower="toLower">
 		<view class="tab-container">
-			<uni-segmented-control :current="current" :values="items" style-type="text" active-color="#267be0"
+			<uni-segmented-control :current="current" :values="cateTaps" style-type="text" active-color="#267be0"
 				@clickItem="onClickItem" />
-		</view>
-		<view class="content">
-			<view class="content-box"v-for="(item,index) in items" :key="index" v-show="current === index">
-				<shopCard v-for="(item,index) in filterShops" :key="index" :shop="item" />
-			</view>
-			<!-- <view v-if="current === 1"><text class="content-text">选项卡2的内容</text></view>
-			<view v-if="current === 2"><text class="content-text">选项卡3的内容</text></view> -->
-		</view>
-	</view>
 
+		</view>
+		<view class="content" >
+			<view class="content-box"v-for="(item,index) in shops" :key="index" v-show="current === index">
+				<shopCard v-for="(item,index) in item.shops" :key="index" :shop="item" />
+			</view>
+		</view>
+	</scroll-view>
 </template>
 
 <script>
@@ -35,37 +32,24 @@
 	export default {
 		data() {
 			return {
-				searchValue: '',
 				current: 0,
-				currentTitle:'',
-				items: [],
 				shops: [],
-				tabs:[]
+				cateTaps:[]
 			}
 		},
 		onLoad() {
-			this.getShopcates()
-			this.getShops()
+			this.getShops({page:1,pageSize:10})
 		},
 		computed:{
 			...mapGetters({
 				totalShopNums:'cart/totalShopNums'
 			}),
-			filterShops(){
-				if(this.current == 0){
-					return this.shops
-				}
-				const filteredShops = this.shops.filter(shop => 
-				  shop.shopcates.some(cate => cate.title === this.currentTitle)
-				);
-				return filteredShops
-			}
+			
 		},
 		methods: {
 			onClickItem(e) {
 				if (this.current !== e.currentIndex) {
 					this.current = e.currentIndex
-					this.currentTitle = this.items[this.current];
 				}
 			},
 			handleToSearchPage(){
@@ -73,41 +57,46 @@
 					url:'/pages/search/search'
 				})
 			},
-			getShopcates() {
-				http.get('/api/v1/shopcates').then((res) => {
+			getShops(payload) {
+				http.get('/api/v1/shopGroup',payload).then((res) => {
 					if (res.success) {
-						this.tabs = res.data.data
-						this.items = res.data.data.map((item) => item.title)
-						this.items = ['全部',...this.items]
+						if(payload.id ){							
+							const data = res.data.shops;
+							this.shops = this.shops.map((item)=> item.id === payload.id ? {...item, page:res.data.page,shops:[...item.shops, ...data]}  : item)
+						}
+						else{
+							this.cateTaps = res.data.map((item)=>{
+								return item.cate
+							})
+							this.shops = res.data;
+						}
 					}
 				})
 			},
-			getShops() {
-				http.get('/api/v1/shops').then((res) => {
-					if (res.success) {
-						this.shops = res.data.data.map((item) => {
-							return {
-								...item,
-								id: item._id
-							}
-						})
-					}
-				})
+			toLower(e){
+				const currentData = this.shops[this.current];
+				if(currentData.page * currentData.pageSize < currentData.totals){
+					this.getShops({id:currentData.id, page:currentData.page +1, pageSize:currentData.pageSize})
+				}
 			},
+			
 		}
 	}
 </script>
 
 <style lang="scss">
+	.scroll-Y {
+		// height: 100%;
+		height: 100vh;
+	}
 	.content {
 		padding: 25rpx 10rpx 10rpx;
 	}
 	.content-box {
 		display: grid;
-		/* grid-template-columns: 1fr 1fr; */
-		grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); /* 列宽自适应 */
+		grid-template-columns: 1fr 1fr;
+		// grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); /* 列宽自适应 */
 		gap: 18rpx;
-		/* grid-auto-rows: auto; */
 	}
 	.actions-box{
 		margin: 10px;
